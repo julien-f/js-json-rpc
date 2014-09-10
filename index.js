@@ -241,20 +241,31 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
 
   var promise = this._handle(message);
 
-  if (type === 'request') {
-    var write = this._write;
-
-    promise = promise.then(
-      function (result) {
-        return write(formatResult(message.id, result));
-      },
-      function (error) {
-        return write(formatError(message.id, error));
-      }
-    );
+  if (type === 'notification') {
+    return;
   }
 
-  return promise;
+  var write = this._write;
+  return promise.then(
+    function (result) {
+      result = formatResult(message.id, result);
+
+      if (write) {
+        return write(result).return(result);
+      }
+
+      return result;
+    },
+    function (error) {
+      error = formatError(message.id, error);
+
+      if (write) {
+        return write(error).return(error);
+      }
+
+      return error;
+    }
+  );
 });
 
 /**
@@ -287,7 +298,7 @@ JsonRpc.prototype.request = asyncMethod(function JsonRpc$request(method, params)
 JsonRpc.prototype.notify = asyncMethod(function JsonRpc$notify(method, params) {
   var notification = formatNotification(method, params);
 
-  return this._write(notification);
+  return this._write(notification).return();
 });
 
 //--------------------------------------------------------------------
