@@ -196,7 +196,17 @@ function JsonRpc(onReceive, onSend) {
  * This function should be called each time a new message is received.
  */
 JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
-  message = parse(message);
+  try {
+    message = parse(message);
+  } catch (error) {
+    error = formatError(message.id, error);
+
+    if (write) {
+      return write(error).return(error);
+    }
+
+    return error;
+  }
 
   if (isArray(message))
   {
