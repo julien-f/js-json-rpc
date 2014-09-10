@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "json-rpc",
+  "version": "0.0.0",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.21.4"
+  },
+  "directories": {
+    "example": "./examples"
+  },
+  "scripts": {
+    "test": "mocha -R spec index.spec.js"
+  },
+  "dependencies": {
+    "bluebird": "^2.3.2",
+    "lodash.has": "^2.4.1",
+    "lodash.isarray": "^2.4.1",
+    "lodash.isnull": "^2.4.1",
+    "lodash.isnumber": "^2.4.1",
+    "lodash.isobject": "^2.4.1",
+    "lodash.isstring": "^2.4.1",
+    "lodash.isundefined": "^2.4.1",
+    "lodash.map": "^2.4.1"
+  }
+}
