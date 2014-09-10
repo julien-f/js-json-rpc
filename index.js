@@ -185,9 +185,9 @@ exports.formatResult = formatResult;
 
 //--------------------------------------------------------------------
 
-function JsonRpc(handler, writer) {
-  this._handle = asyncMethod(handler);
-  this._write = writer && asyncMethod(writer);
+function JsonRpc(onReceive, onSend) {
+  this._handle = asyncMethod(onReceive);
+  this._write = onSend && asyncMethod(onSend);
 
   this._deferreds = Object.create(null);
 }
@@ -282,6 +282,6 @@ JsonRpc.prototype.notify = asyncMethod(function JsonRpc$notify(method, params) {
 
 //--------------------------------------------------------------------
 
-exports.create = function (handler, writer) {
-  return new JsonRpc(handler, writer);
+exports.create = function (onReceive, onSend) {
+  return new JsonRpc(onReceive, onSend);
 };
