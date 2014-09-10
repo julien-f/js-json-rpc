@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "dependencies": {
+    "ldjson-stream": "^1.2.1",
+    "stream-combiner": "^0.2.1"
+  }
+}
