@@ -210,7 +210,7 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
 
   if (isArray(message))
   {
-    return map(message, this.exec, this);
+    return Bluebird.map(message, this.exec.bind(this));
   }
 
   var type = message.type;
