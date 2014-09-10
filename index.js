@@ -47,12 +47,13 @@ function parse(message) {
     {
       message = JSON.parse(message);
     }
-    catch (e)
+    catch (error)
     {
-      throw (e instanceof SyntaxError) ?
-        new InvalidJson() :
-        new UnknownError()
-      ;
+      if (error instanceof SyntaxError) {
+        throw new InvalidJson();
+      }
+
+      throw error;
     }
   }
 
