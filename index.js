@@ -12,6 +12,7 @@ var isObject = require('lodash.isobject');
 var isString = require('lodash.isstring');
 var isUndefined = require('lodash.isundefined');
 var map = require('lodash.map');
+var through = require('through2');
 
 var JsonRpcError = require('./errors').JsonRpcError;
 
@@ -300,6 +301,18 @@ JsonRpc.prototype.notify = asyncMethod(function JsonRpc$notify(method, params) {
 
   return this._write(notification).return();
 });
+
+JsonRpc.prototype.stream = function () {
+  var jsonRpc = this;
+  return through.obj(function (message, enc, next) {
+    jsonRpc.exec(message).then(function (response) {
+      // No response for notifications.
+      if (response) {
+        next(null, response);
+      }
+    }, next);
+  });
+};
 
 //--------------------------------------------------------------------
 
