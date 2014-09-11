@@ -23,5 +23,8 @@
     "lodash.isundefined": "^2.4.1",
     "lodash.map": "^2.4.1",
     "through2": "^0.6.1"
-  }
+  },
+  "files": [
+    "*.js"
+  ]
 }
