@@ -4,22 +4,20 @@
 
 require('bluebird').longStackTraces();
 
-var createHttp = require('http').createServer;
+var http = require('http');
 
 var parseJsonStream = require('ldjson-stream').parse;
 var serializeJsonStream = require('ldjson-stream').serialize;
 var combineStreams = require('stream-combiner');
 
-var createJsonRpc = require('../').create;
+var JsonRpc = require('../');
 var MethodNotFound = require('../errors').MethodNotFound;
 
 var PORT = 36914;
 
 //====================================================================
 
-var http = createHttp().listen(PORT);
-
-var jsonRpc = createJsonRpc(function onMessage(message) {
+var jsonRpc = JsonRpc.create(function onMessage(message) {
   if (message.type === 'notification') {
     return console.log('notification:', message);
   }
@@ -33,15 +31,24 @@ var jsonRpc = createJsonRpc(function onMessage(message) {
   throw new MethodNotFound();
 });
 
-http.on('request', function (req, res) {
+http.createServer(function (req, res) {
   combineStreams([
+    // Read from the request.
     req,
+
+    // Parse line-delimited JSON messages.
     parseJsonStream(),
+
+    // Handle JSON-RPC requests.
     jsonRpc.stream(),
+
+    // Format as line-delimited JSON messages.
     serializeJsonStream(),
+
+    // Send to the response.
     res,
   ]);
-});
+}).listen(PORT);
 
 //====================================================================
 
