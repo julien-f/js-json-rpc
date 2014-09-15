@@ -18,6 +18,7 @@ var JsonRpcError = require('./errors').JsonRpcError;
 
 var InvalidJson = require('./errors').InvalidJson;
 var InvalidRequest = require('./errors').InvalidRequest;
+var MethodNotFound = require('./errors').MethodNotFound;
 var UnknownError = require('./errors').UnknownError;
 
 //====================================================================
@@ -240,7 +241,15 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
     return;
   }
 
-  var promise = this._handle(message);
+  var promise = this._handle(message).catch(MethodNotFound, function (error) {
+    // If the method name is not defined, default to the method passed
+    // in the request.
+    if (!error.data) {
+      throw new MethodNotFound(message.method);
+    }
+
+    throw error;
+  });
 
   if (type === 'notification') {
     return;
