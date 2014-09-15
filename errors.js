@@ -6,10 +6,11 @@ var makeError = require('./make-error');
 
 //====================================================================
 
-function JsonRpcError(message, code) {
+function JsonRpcError(message, code, data) {
   JsonRpcError.super.call(this, message);
 
   this.code = code;
+  this.data = data;
 }
 makeError(JsonRpcError);
 exports.JsonRpcError = JsonRpcError;
@@ -32,16 +33,21 @@ exports.InvalidRequest = InvalidRequest;
 
 //--------------------------------------------------------------------
 
-function MethodNotFound() {
-  MethodNotFound.super.call(this, 'method not found', -32601);
+function MethodNotFound(method) {
+  var message = method ?
+    'method not found: '+ method :
+    'method not found'
+  ;
+
+  MethodNotFound.super.call(this, message, -32601, method);
 }
 makeError(MethodNotFound, JsonRpcError);
 exports.MethodNotFound = MethodNotFound;
 
 //--------------------------------------------------------------------
 
-function InvalidParameters() {
-  InvalidParameters.super.call(this, 'invalid parameter(s)', -32602);
+function InvalidParameters(data) {
+  InvalidParameters.super.call(this, 'invalid parameter(s)', -32602, data);
 }
 makeError(InvalidParameters, JsonRpcError);
 exports.InvalidParameters = InvalidParameters;
