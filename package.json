@@ -30,6 +30,7 @@
     "lodash.isstring": "^2.4.1",
     "lodash.isundefined": "^2.4.1",
     "lodash.map": "^2.4.1",
+    "make-error": "^0.2.0",
     "through2": "^0.6.1"
   },
   "files": [
