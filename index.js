@@ -28,7 +28,9 @@ function isInteger(value) {
 }
 
 function xor(a, b) {
-  return (a || b) && !(a && b);
+  /* jshint -W018 */
+
+  return (!a !== !b);
 }
 
 //--------------------------------------------------------------------
