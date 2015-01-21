@@ -200,6 +200,8 @@ function JsonRpc(onReceive, onSend) {
  * This function should be called each time a new message is received.
  */
 JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
+  var write = this._write;
+
   try {
     message = parse(message);
   } catch (error) {
@@ -257,7 +259,6 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
     return;
   }
 
-  var write = this._write;
   return promise.then(
     function (result) {
       result = formatResponse(message.id, result);
