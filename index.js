@@ -178,14 +178,14 @@ exports.formatError = formatError;
 
 //--------------------------------------------------------------------
 
-function formatResult(id, result) {
+function formatResponse(id, result) {
   return {
     jsonrpc: '2.0',
     id: id,
     result: result,
   };
 }
-exports.formatResult = formatResult;
+exports.formatResponse = formatResponse;
 
 //--------------------------------------------------------------------
 
@@ -260,7 +260,7 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
   var write = this._write;
   return promise.then(
     function (result) {
-      result = formatResult(message.id, result);
+      result = formatResponse(message.id, result);
 
       if (write) {
         return write(result).return(result);
