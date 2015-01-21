@@ -189,7 +189,7 @@ exports.formatResponse = formatResponse;
 
 //--------------------------------------------------------------------
 
-function JsonRpc(onReceive, onSend) {
+function JsonRpcServer(onReceive, onSend) {
   this._handle = asyncMethod(onReceive);
   this._write = onSend && asyncMethod(onSend);
 
@@ -199,7 +199,7 @@ function JsonRpc(onReceive, onSend) {
 /**
  * This function should be called each time a new message is received.
  */
-JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
+JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) {
   var write = this._write;
 
   try {
@@ -286,7 +286,7 @@ JsonRpc.prototype.exec = asyncMethod(function JsonRpc$exec(message) {
  *
  * TODO: handle multi-requests.
  */
-JsonRpc.prototype.request = asyncMethod(function JsonRpc$request(method, params) {
+JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request(method, params) {
   var request = formatRequest(method, params);
 
   // https://github.com/petkaantonov/bluebird/blob/master/API.md#deferred-migration
@@ -308,13 +308,13 @@ JsonRpc.prototype.request = asyncMethod(function JsonRpc$request(method, params)
  *
  * TODO: handle multi-notifications.
  */
-JsonRpc.prototype.notify = asyncMethod(function JsonRpc$notify(method, params) {
+JsonRpcServer.prototype.notify = asyncMethod(function JsonRpcServer$notify(method, params) {
   var notification = formatNotification(method, params);
 
   return this._write(notification).return();
 });
 
-JsonRpc.prototype.stream = function () {
+JsonRpcServer.prototype.stream = function () {
   var jsonRpc = this;
   return through.obj(function (message, enc, next) {
     jsonRpc.exec(message).then(function (response) {
@@ -328,6 +328,18 @@ JsonRpc.prototype.stream = function () {
 
 //--------------------------------------------------------------------
 
-exports.create = function (onReceive, onSend) {
-  return new JsonRpc(onReceive, onSend);
+exports.createServer = function (onReceive, onSend) {
+  return new JsonRpcServer(onReceive, onSend);
 };
+
+// Compatibility.
+Object.defineProperty(exports, 'create', {
+  enumerable: true,
+  get: function () {
+    console.error(
+      'jsonRpc: create() is deprecated in favor of createServer()'
+    );
+
+    return exports.createServer;
+  }
+});
