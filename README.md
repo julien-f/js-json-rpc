@@ -60,13 +60,13 @@ be flexible enough to use in any environments.
 
 ```javascript
 var server = jsonRpc.createServer(function onMessage(message) {
-// Here is the main handler where every incoming
-// notification/request message goes.
-//
-// For a request, this function just has to throw an exception or
-// return a value to send the related response.
-//
-// If the response is asynchronous, just return a promise.
+  // Here is the main handler where every incoming
+  // notification/request message goes.
+  //
+  // For a request, this function just has to throw an exception or
+  // return a value to send the related response.
+  //
+  // If the response is asynchronous, just return a promise.
 });
 ```
 
@@ -79,6 +79,25 @@ require('websocket-stream').createServer({
   port: 8080
 }, function onConnection(stream) {
   stream.pipe(server).pipe(stream);
+});
+```
+
+There is also a low-level interface, the `exec()` method:
+
+```javascript
+var readAllSteam = require('read-all-stream');
+
+// For this example we create an HTTP server:
+require('http').createServer({
+  port: 8081
+}, function onRequest(req, res) {
+  // Read the whole request body.
+  readAllStream(req, function (err, data) {
+    server.exec(message).then(function (response) {
+      // Sends the JSON encoded response.
+      res.end(JSON.stringify(response));
+    });
+  });
 });
 ```
 
