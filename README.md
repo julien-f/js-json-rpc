@@ -59,31 +59,26 @@ be flexible enough to use in any environments.
 #### Construction
 
 ```javascript
-var server = jsonRpc.createServer(
-  function onMessage(message) {
-    // Here is the main handler where every incoming
-    // notification/request message goes.
-    //
-    // For a request, this function just has to throw an exception or
-    // return a value to send the related response.
-    //
-    // If the response is asynchronous, just return a promise.
-  },
-  function onSend(message) {
-    // Here is the function where message to emit to the client goes.
-    //
-    // If the emission is asynchronous, it should return a promise.
+var server = jsonRpc.createServer(function onMessage(message) {
+// Here is the main handler where every incoming
+// notification/request message goes.
+//
+// For a request, this function just has to throw an exception or
+// return a value to send the related response.
+//
+// If the response is asynchronous, just return a promise.
+});
+```
 
-    // Example:
-    client.send(JSON.stringify(message));
-  }
-);
+The server is a duplex stream, it can be connected to other stream via
+the `pipe()` method:
 
-// When a message is received from the client, it must be injected in
-// the server through this method.
-client.on('message', function (message) {
-  // Example:
-  server.exec(message);
+```javascript
+// For this example, we create a WebSocket server:
+require('websocket-stream').createServer({
+  port: 8080
+}, function onConnection(stream) {
+  stream.pipe(server).pipe(stream);
 });
 ```
 

@@ -17,7 +17,7 @@ var PORT = 36914;
 
 //====================================================================
 
-var jsonRpc = JsonRpc.create(function onMessage(message) {
+var jsonRpc = JsonRpc.createServer(function onMessage(message) {
   if (message.type === 'notification') {
     return console.log('notification:', message);
   }
@@ -40,7 +40,7 @@ http.createServer(function (req, res) {
     parseJsonStream(),
 
     // Handle JSON-RPC requests.
-    jsonRpc.stream(),
+    jsonRpc,
 
     // Format as line-delimited JSON messages.
     serializeJsonStream(),

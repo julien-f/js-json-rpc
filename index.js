@@ -2,8 +2,11 @@
 
 //====================================================================
 
+var inherits = require('util').inherits;
+
 var asyncMethod = require('bluebird').method;
 var Bluebird = require('bluebird');
+var Duplex = require('readable-stream/duplex');
 var has = require('lodash.has');
 var isArray = require('lodash.isarray');
 var isNull = require('lodash.isnull');
@@ -12,7 +15,6 @@ var isObject = require('lodash.isobject');
 var isString = require('lodash.isstring');
 var isUndefined = require('lodash.isundefined');
 var map = require('lodash.map');
-var through = require('through2');
 
 var JsonRpcError = require('./errors').JsonRpcError;
 
@@ -189,29 +191,36 @@ exports.formatResponse = formatResponse;
 
 //--------------------------------------------------------------------
 
-function JsonRpcServer(onReceive, onSend) {
-  this._handle = asyncMethod(onReceive);
-  this._write = onSend && asyncMethod(onSend);
+function JsonRpcServer(onReceive) {
+  Duplex.call(this, {
+    objectMode: true
+  });
 
+  this._handle = asyncMethod(onReceive);
   this._deferreds = Object.create(null);
 }
+inherits(JsonRpcServer, Duplex);
 
-/**
- * This function should be called each time a new message is received.
- */
+// Emit buffered outgoing messages.
+JsonRpcServer.prototype._read = function () {};
+
+// Receive and execute incoming messages.
+JsonRpcServer.prototype._write = function (message, _, next) {
+  var this_ = this;
+  this.exec(message).then(function (response) {
+    if (response) {
+      this_.push(response);
+    }
+
+    next();
+  });
+};
+
 JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) {
-  var write = this._write;
-
   try {
     message = parse(message);
   } catch (error) {
-    error = formatError(message.id, error);
-
-    if (write) {
-      return write(error).return(error);
-    }
-
-    return error;
+    return formatError(message.id, error);
   }
 
   if (isArray(message))
@@ -261,22 +270,10 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
 
   return promise.then(
     function (result) {
-      result = formatResponse(message.id, result);
-
-      if (write) {
-        return write(result).return(result);
-      }
-
-      return result;
+      return formatResponse(message.id, result);
     },
     function (error) {
-      error = formatError(message.id, error);
-
-      if (write) {
-        return write(error).return(error);
-      }
-
-      return error;
+      return formatError(message.id, error);
     }
   );
 });
@@ -288,6 +285,7 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
  */
 JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request(method, params) {
   var request = formatRequest(method, params);
+  this.push(request);
 
   // https://github.com/petkaantonov/bluebird/blob/master/API.md#deferred-migration
   var promise, resolve, reject;
@@ -300,7 +298,7 @@ JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request(met
     reject: reject,
   };
 
-  return this._write(request).return(promise);
+  return promise;
 });
 
 /**
@@ -309,21 +307,16 @@ JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request(met
  * TODO: handle multi-notifications.
  */
 JsonRpcServer.prototype.notify = asyncMethod(function JsonRpcServer$notify(method, params) {
-  var notification = formatNotification(method, params);
-
-  return this._write(notification).return();
+  this.push(formatNotification(method, params));
 });
 
+// Compatibility.
 JsonRpcServer.prototype.stream = function () {
-  var jsonRpc = this;
-  return through.obj(function (message, enc, next) {
-    jsonRpc.exec(message).then(function (response) {
-      // No response for notifications.
-      if (response) {
-        next(null, response);
-      }
-    }, next);
-  });
+  console.error(
+    'jsonRpc: stream() is deprecated, the server is already a stream!'
+  );
+
+  return this;
 };
 
 //--------------------------------------------------------------------
@@ -334,7 +327,6 @@ exports.createServer = function (onReceive, onSend) {
 
 // Compatibility.
 Object.defineProperty(exports, 'create', {
-  enumerable: true,
   get: function () {
     console.error(
       'jsonRpc: create() is deprecated in favor of createServer()'

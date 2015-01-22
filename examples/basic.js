@@ -15,48 +15,41 @@ var MethodNotFound = require('../errors').MethodNotFound;
 // and connected to each other.
 var peer1, peer2;
 
-peer1 = jsonRpc.create(
-  function receiveMessage(message) {
-    if (message.type === 'notification') {
-      return console.log('notif to peer1: %s(%j)',
-        message.method,
-        message.params
-      );
-    }
-
-    throw new MethodNotFound();
-  },
-  function sendMessage(message) {
-    return peer2.exec(message);
+peer1 = jsonRpc.createServer(function (message) {
+  if (message.type === 'notification') {
+    return console.log('notif to peer1: %s(%j)',
+      message.method,
+      message.params
+    );
   }
-);
 
-peer2 = jsonRpc.create(
-  function receiveMessage(message) {
-    if (message.type === 'notification') {
-      return console.log('notif to peer2: %s%j',
-        message.method,
-        message.params
-      );
-    }
+  throw new MethodNotFound();
+});
 
-    if (message.method === 'add') {
-      var sum = 0;
-      message.params.forEach(function (value) {
-        sum += value;
-      });
-
-      // The result can be returned directly be it can also be a
-      // promise like here.
-      return delay(sum, 1e3);
-    }
-
-    throw new MethodNotFound();
-  },
-  function sendMessage(message) {
-    return peer1.exec(message);
+peer2 = jsonRpc.createServer(function (message) {
+  if (message.type === 'notification') {
+    return console.log('notif to peer2: %s%j',
+      message.method,
+      message.params
+    );
   }
-);
+
+  if (message.method === 'add') {
+    var sum = 0;
+    message.params.forEach(function (value) {
+      sum += value;
+    });
+
+    // The result can be returned directly be it can also be a
+    // promise like here.
+    return delay(sum, 1e3);
+  }
+
+  throw new MethodNotFound();
+});
+
+// Connect peer1 and peer2.
+peer1.pipe(peer2).pipe(peer1);
 
 // Peer 1 sends a notification to peer 2.
 peer1.notify('foo', ['bar', 'baz']);
