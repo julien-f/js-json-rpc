@@ -234,6 +234,12 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
   if (type === 'response')
   {
     var id = message.id;
+
+    // Some errors do not have an identifier, simply discard them.
+    if (id === undefined) {
+      return;
+    }
+
     var deferred = this._deferreds[id];
 
     if (!deferred)
