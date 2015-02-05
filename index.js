@@ -278,6 +278,16 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
   );
 });
 
+// Fails all pending requests.
+JsonRpcServer.prototype.failPendingRequests = function (reason) {
+  var deferreds = this._deferreds;
+  var ids = keys(deferreds);
+  ids.forEach(function (id) {
+    deferreds[id].reject(reason);
+    delete deferreds[i];
+  })
+};
+
 /**
  * This function should be called to send a request to the other end.
  *

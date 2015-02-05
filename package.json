@@ -29,6 +29,7 @@
     "lodash.isobject": "^2.4.1",
     "lodash.isstring": "^2.4.1",
     "lodash.isundefined": "^2.4.1",
+    "lodash.keys": "^3.0.2",
     "lodash.map": "^2.4.1",
     "make-error": "^0.2.0",
     "readable-stream": "^1.0.33"

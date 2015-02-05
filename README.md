@@ -120,6 +120,21 @@ server.request('add', [1, 2]).then(function (result) {
 });
 ```
 
+#### Failure
+
+Sometimes it is known that current pending requests will not get
+answered (e.g. connection lost), it is therefore necessary to fail
+them manually.
+
+```javascript
+server.request('add', [1, 2]).catch(function (reason) {
+  console.error(reason);
+  // → connection lost
+});
+
+server.failPendingRequests('connection lost');
+```
+
 ### Parsing
 
 The `parse()` function parse JSON-RPC messages. These message can be
