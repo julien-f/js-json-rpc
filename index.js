@@ -14,6 +14,7 @@ var isNumber = require('lodash.isnumber');
 var isObject = require('lodash.isobject');
 var isString = require('lodash.isstring');
 var isUndefined = require('lodash.isundefined');
+var keys = require('lodash.keys');
 var map = require('lodash.map');
 
 var JsonRpcError = require('./errors').JsonRpcError;
