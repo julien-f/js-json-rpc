@@ -162,7 +162,7 @@ function formatError(id, error) {
   // Hide internal errors.
   if (!(error instanceof JsonRpcError)) {
     // But log them because this should not happened!
-    console.error(error.stack || error);
+    console.error(error && error.stack || error);
 
     error = new UnknownError();
   }
