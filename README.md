@@ -1,6 +1,6 @@
 # json-rpc
 
-> Easy to use JSON-RPC library
+> Easy to use [JSON-RPC 2](http://www.jsonrpc.org/specification) library
 
 ## Installation
 
