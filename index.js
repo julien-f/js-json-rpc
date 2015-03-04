@@ -291,8 +291,8 @@ JsonRpcServer.prototype.failPendingRequests = function (reason) {
   var ids = keys(deferreds);
   ids.forEach(function (id) {
     deferreds[id].reject(reason);
-    delete deferreds[i];
-  })
+    delete deferreds[id];
+  });
 };
 
 /**
