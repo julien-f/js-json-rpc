@@ -251,7 +251,12 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
 
     if (has(message, 'error'))
     {
-      deferred.reject(message.error);
+      var error = message.error;
+      deferred.reject(new JsonRpcError(
+        error.message,
+        error.code,
+        error.data
+      ));
     }
     else
     {
