@@ -252,6 +252,9 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec(message) 
     if (has(message, 'error'))
     {
       var error = message.error;
+
+      // TODO: it would be great if we could return an error with of a
+      // more specific type (and custom types with registration).
       deferred.reject(new JsonRpcError(
         error.message,
         error.code,
