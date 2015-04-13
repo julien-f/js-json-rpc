@@ -360,3 +360,10 @@ Object.defineProperty(exports, 'create', {
     return exports.createServer;
   }
 });
+
+//====================================================================
+
+// Ensure maximum import compatibility with Babel.
+Object.defineProperty(exports, '__esModule', {
+  value: true,
+});

@@ -59,3 +59,10 @@ function UnknownError() {
 }
 makeError(UnknownError, JsonRpcError);
 exports.UnknownError = UnknownError;
+
+//====================================================================
+
+// Ensure maximum import compatibility with Babel.
+Object.defineProperty(exports, '__esModule', {
+  value: true,
+});
