@@ -7,10 +7,21 @@ var makeError = require('make-error');
 //====================================================================
 
 function JsonRpcError(message, code, data) {
-  JsonRpcError.super.call(this, message);
+  JsonRpcError.super.call(
+    this,
+    message === undefined ?
+      'unknown error from the server' :
+      message
+  );
 
-  this.code = code;
-  this.data = data;
+  this.code = code === undefined ?
+    -32000 :
+    code
+  ;
+
+  if (data !== undefined) {
+    this.data = data;
+  }
 }
 makeError(JsonRpcError);
 exports.JsonRpcError = JsonRpcError;
@@ -55,7 +66,7 @@ exports.InvalidParameters = InvalidParameters;
 //--------------------------------------------------------------------
 
 function UnknownError() {
-  UnknownError.super.call(this, 'unknown error from the server', -32000);
+  UnknownError.super.call(this);
 }
 makeError(UnknownError, JsonRpcError);
 exports.UnknownError = UnknownError;
