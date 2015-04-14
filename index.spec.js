@@ -1,58 +1,60 @@
-'use strict';
+'use strict'
 
-//====================================================================
+/* eslint-env mocha */
 
-var jsonRpc = require('./');
+// ===================================================================
 
-//====================================================================
+var jsonRpc = require('./')
 
-var expect = require('chai').expect;
+// ===================================================================
 
-var errors = require('./errors');
+var expect = require('chai').expect
 
-//====================================================================
+var errors = require('./errors')
+
+// ===================================================================
 
 describe('parse()', function () {
   it('throws on invalid JSON', function () {
     expect(function () {
-      jsonRpc.parse('');
-    }).to.throw(errors.InvalidJson);
-  });
+      jsonRpc.parse('')
+    }).to.throw(errors.InvalidJson)
+  })
 
   it('throws on invalid JSON-RPC', function () {
     expect(function () {
-      jsonRpc.parse({});
-    }).to.throw(errors.InvalidRequest);
-  });
+      jsonRpc.parse({})
+    }).to.throw(errors.InvalidRequest)
+  })
 
   it('handles notification', function () {
     var notif = jsonRpc.parse({
       jsonrpc: '2.0',
-      method: 'foo',
-    });
+      method: 'foo'
+    })
 
-    expect(notif.type).to.equal('notification');
-  });
+    expect(notif.type).to.equal('notification')
+  })
 
   it('handles request', function () {
     var notif = jsonRpc.parse({
       jsonrpc: '2.0',
       id: 0,
-      method: 'bar',
-    });
+      method: 'bar'
+    })
 
-    expect(notif.type).to.equal('request');
-  });
+    expect(notif.type).to.equal('request')
+  })
 
   it('handles successful response', function () {
     var notif = jsonRpc.parse({
       jsonrpc: '2.0',
       id: 0,
-      result: 'baz',
-    });
+      result: 'baz'
+    })
 
-    expect(notif.type).to.equal('response');
-  });
+    expect(notif.type).to.equal('response')
+  })
 
   it('handles failed response', function () {
     var notif = jsonRpc.parse({
@@ -60,10 +62,10 @@ describe('parse()', function () {
       id: 0,
       error: {
         code: 0,
-        message: '',
+        message: ''
       }
-    });
+    })
 
-    expect(notif.type).to.equal('response');
-  });
-});
+    expect(notif.type).to.equal('response')
+  })
+})

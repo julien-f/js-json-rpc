@@ -12,13 +12,14 @@
   ],
   "devDependencies": {
     "chai": "^2.1.0",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "standard": "*"
   },
   "directories": {
     "example": "./examples"
   },
   "scripts": {
-    "test": "mocha -R spec index.spec.js"
+    "test": "standard && mocha -R spec index.spec.js"
   },
   "dependencies": {
     "bluebird": "^2.9.13",

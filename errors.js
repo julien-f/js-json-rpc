@@ -1,79 +1,77 @@
-'use strict';
+'use strict'
 
-//====================================================================
+// ===================================================================
 
-var makeError = require('make-error');
+var makeError = require('make-error')
 
-//====================================================================
+// ===================================================================
 
-function JsonRpcError(message, code, data) {
+function JsonRpcError (message, code, data) {
   JsonRpcError.super.call(
     this,
     message === undefined ?
       'unknown error from the server' :
       message
-  );
+  )
 
   this.code = code === undefined ?
     -32000 :
     code
-  ;
 
   if (data !== undefined) {
-    this.data = data;
+    this.data = data
   }
 }
-makeError(JsonRpcError);
-exports.JsonRpcError = JsonRpcError;
+makeError(JsonRpcError)
+exports.JsonRpcError = JsonRpcError
 
-//--------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-function InvalidJson() {
-  InvalidJson.super.call(this, 'invalid JSON', -32700);
+function InvalidJson () {
+  InvalidJson.super.call(this, 'invalid JSON', -32700)
 }
-makeError(InvalidJson, JsonRpcError);
-exports.InvalidJson = InvalidJson;
+makeError(InvalidJson, JsonRpcError)
+exports.InvalidJson = InvalidJson
 
-//--------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-function InvalidRequest() {
-  InvalidRequest.super.call(this, 'invalid JSON-RPC request', -32600);
+function InvalidRequest () {
+  InvalidRequest.super.call(this, 'invalid JSON-RPC request', -32600)
 }
-makeError(InvalidRequest, JsonRpcError);
-exports.InvalidRequest = InvalidRequest;
+makeError(InvalidRequest, JsonRpcError)
+exports.InvalidRequest = InvalidRequest
 
-//--------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-function MethodNotFound(method) {
+function MethodNotFound (method) {
   var message = method ?
-    'method not found: '+ method :
+    'method not found: ' + method :
     'method not found'
-  ;
 
-  MethodNotFound.super.call(this, message, -32601, method);
+  MethodNotFound.super.call(this, message, -32601, method)
 }
-makeError(MethodNotFound, JsonRpcError);
-exports.MethodNotFound = MethodNotFound;
+makeError(MethodNotFound, JsonRpcError)
+exports.MethodNotFound = MethodNotFound
 
-//--------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-function InvalidParameters(data) {
-  InvalidParameters.super.call(this, 'invalid parameter(s)', -32602, data);
+function InvalidParameters (data) {
+  InvalidParameters.super.call(this, 'invalid parameter(s)', -32602, data)
 }
-makeError(InvalidParameters, JsonRpcError);
-exports.InvalidParameters = InvalidParameters;
+makeError(InvalidParameters, JsonRpcError)
+exports.InvalidParameters = InvalidParameters
 
-//--------------------------------------------------------------------
+// -------------------------------------------------------------------
 
-function UnknownError() {
-  UnknownError.super.call(this);
+function UnknownError () {
+  UnknownError.super.call(this)
 }
-makeError(UnknownError, JsonRpcError);
-exports.UnknownError = UnknownError;
+makeError(UnknownError, JsonRpcError)
+exports.UnknownError = UnknownError
 
-//====================================================================
+// ===================================================================
 
 // Ensure maximum import compatibility with Babel.
 Object.defineProperty(exports, '__esModule', {
-  value: true,
-});
+  value: true
+})
