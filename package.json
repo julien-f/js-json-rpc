@@ -1,6 +1,5 @@
 {
-  "private": true,
-  "name": "json-rpc",
+  "name": "@julien-f/json-rpc",
   "version": "0.3.4",
   "license": "ISC",
   "description": "Easy to use JSON-RPC 2 library",
