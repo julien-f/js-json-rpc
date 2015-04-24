@@ -4,7 +4,7 @@
 
 ## Installation
 
-Installation of the [npm package](https://npmjs.org/package/json-rpc):
+Installation of the [npm package](https://npmjs.org/package/@julien-f/json-rpc):
 
 ```
 > npm install --save json-rpc
@@ -13,7 +13,7 @@ Installation of the [npm package](https://npmjs.org/package/json-rpc):
 Then require the package:
 
 ```javascript
-var jsonRpc = require('json-rpc');
+var jsonRpc = require('@julien-f/json-rpc');
 ```
 
 ## Usage
@@ -146,7 +146,7 @@ This function may throws:
 - `InvalidRequest`: if the message is not a valid JSON-RPC message.
 
 ```javascript
-var parse = require('json-rpc/parse')
+var parse = require('@julien-f/json-rpc/parse')
 
 parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 // → {
@@ -228,7 +228,7 @@ jsonRpc.formatResponse(0, 3);
 A failed response:
 
 ```javascript
-var MethodNotFound = require('json-rpc/errors').MethodNotFound;
+var MethodNotFound = require('@julien-f/json-rpc/errors').MethodNotFound;
 
 jsonRpc.formatError(0, new MethodNotFound('add'));
 // → {
