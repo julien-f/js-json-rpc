@@ -13,71 +13,10 @@ var keys = require('lodash.keys')
 
 var JsonRpcError = require('./errors').JsonRpcError
 var MethodNotFound = require('./errors').MethodNotFound
+var format = require('./format')
 var parse = require('./parse')
-var UnknownError = require('./errors').UnknownError
 
 // ===================================================================
-
-var nextId = 0
-
-// -------------------------------------------------------------------
-
-function formatRequest (method, params, id) {
-  return {
-    jsonrpc: '2.0',
-    method: method,
-    params: params || [],
-    id: id || nextId++
-  }
-}
-exports.formatRequest = formatRequest
-
-// -------------------------------------------------------------------
-
-function formatNotification (method, params) {
-  return {
-    jsonrpc: '2.0',
-    method: method,
-    params: params || []
-  }
-}
-exports.formatNotification = formatNotification
-
-// -------------------------------------------------------------------
-
-function formatError (id, error) {
-  // Hide internal errors.
-  if (!(error instanceof JsonRpcError)) {
-    // But log them because this should not happened!
-    console.error(error && error.stack || error)
-
-    error = new UnknownError()
-  }
-
-  return {
-    jsonrpc: '2.0',
-    id: id,
-    error: {
-      code: error.code,
-      message: error.message,
-      data: error.data
-    }
-  }
-}
-exports.formatError = formatError
-
-// -------------------------------------------------------------------
-
-function formatResponse (id, result) {
-  return {
-    jsonrpc: '2.0',
-    id: id,
-    result: result
-  }
-}
-exports.formatResponse = formatResponse
-
-// -------------------------------------------------------------------
 
 function JsonRpcServer (onReceive) {
   Duplex.call(this, {
@@ -108,7 +47,7 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec (message)
   try {
     message = parse(message)
   } catch (error) {
-    return formatError(message.id, error)
+    return format.error(message.id, error)
   }
 
   if (isArray(message)) {
@@ -166,10 +105,10 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec (message)
 
   return promise.then(
     function (result) {
-      return formatResponse(message.id, result)
+      return format.response(message.id, result)
     },
     function (error) {
-      return formatError(message.id, error)
+      return format.error(message.id, error)
     }
   )
 })
@@ -190,7 +129,7 @@ JsonRpcServer.prototype.failPendingRequests = function (reason) {
  * TODO: handle multi-requests.
  */
 JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request (method, params) {
-  var request = formatRequest(method, params)
+  var request = format.request(method, params)
   this.push(request)
 
   // https://github.com/petkaantonov/bluebird/blob/master/API.md#deferred-migration
@@ -213,7 +152,7 @@ JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request (me
  * TODO: handle multi-notifications.
  */
 JsonRpcServer.prototype.notify = asyncMethod(function JsonRpcServer$notify (method, params) {
-  this.push(formatNotification(method, params))
+  this.push(format.notification(method, params))
 })
 
 // Compatibility.

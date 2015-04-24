@@ -176,14 +176,18 @@ parse('{"jsonrpc":"2.0", "id": 0, "result": 3}');
 
 ### Formatting
 
-The `format*()` functions can be used to create valid JSON-RPC message
-in the form of JS objects. It is up to you to format them in JSON if
-necessary.
+```javascript
+var format = require('@julien-f/json-rpc/format')
+```
+
+The `format.*()` functions can be used to create valid JSON-RPC
+message in the form of JS objects. It is up to you to format them in
+JSON if necessary.
 
 #### Notification
 
 ```javascript
-jsonRpc.formatNotification('foo', ['bars']);
+format.notification('foo', ['bars']);
 // → {
 //   jsonrpc: '2.0',
 //   method: 'foo',
@@ -203,7 +207,7 @@ The last argument, the identifier of the request is optional and is
 generated if missing via an increment.
 
 ```javascript
-jsonRpc.formatRequest('add', [1, 2], 0);
+format.request('add', [1, 2], 0);
 // → {
 //   jsonrpc: '2.0',
 //   id: 0,
@@ -217,7 +221,7 @@ jsonRpc.formatRequest('add', [1, 2], 0);
 A successful response:
 
 ```javascript
-jsonRpc.formatResponse(0, 3);
+format.response(0, 3);
 // → {
 //   jsonrpc: '2.0',
 //   id: 0,
@@ -230,7 +234,7 @@ A failed response:
 ```javascript
 var MethodNotFound = require('@julien-f/json-rpc/errors').MethodNotFound;
 
-jsonRpc.formatError(0, new MethodNotFound('add'));
+format.error(0, new MethodNotFound('add'));
 // → {
 //   jsonrpc: '2.0',
 //   id: 0,
