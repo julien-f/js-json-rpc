@@ -20,6 +20,14 @@ function isInteger (value) {
   return isNumber(value) && (value % 1 === 0)
 }
 
+function setMessageType (message, type) {
+  Object.defineProperty(message, 'type', {
+    configurable: true,
+    value: type,
+    writable: true
+  })
+}
+
 function xor (a, b) {
   return (!a !== !b)
 }
@@ -69,13 +77,13 @@ function parse (message) {
 
     var id = message.id
     if (isUndefined(id)) {
-      message.type = 'notification'
+      setMessageType(message, 'notification')
     } else if (
       isNull(id) ||
       isNumber(id) ||
       isString(id)
     ) {
-      message.type = 'request'
+      setMessageType(message, 'request')
     } else {
       throw new InvalidRequest()
     }
@@ -94,7 +102,7 @@ function parse (message) {
       throw new InvalidRequest()
     }
 
-    message.type = 'response'
+    setMessageType(message, 'response')
   }
 
   return message
