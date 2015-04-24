@@ -4,7 +4,7 @@
 
 // ===================================================================
 
-var jsonRpc = require('./')
+var parse = require('./parse')
 
 // ===================================================================
 
@@ -17,18 +17,18 @@ var errors = require('./errors')
 describe('parse()', function () {
   it('throws on invalid JSON', function () {
     expect(function () {
-      jsonRpc.parse('')
+      parse('')
     }).to.throw(errors.InvalidJson)
   })
 
   it('throws on invalid JSON-RPC', function () {
     expect(function () {
-      jsonRpc.parse({})
+      parse({})
     }).to.throw(errors.InvalidRequest)
   })
 
   it('handles notification', function () {
-    var notif = jsonRpc.parse({
+    var notif = parse({
       jsonrpc: '2.0',
       method: 'foo'
     })
@@ -37,7 +37,7 @@ describe('parse()', function () {
   })
 
   it('handles request', function () {
-    var notif = jsonRpc.parse({
+    var notif = parse({
       jsonrpc: '2.0',
       id: 0,
       method: 'bar'
@@ -47,7 +47,7 @@ describe('parse()', function () {
   })
 
   it('handles successful response', function () {
-    var notif = jsonRpc.parse({
+    var notif = parse({
       jsonrpc: '2.0',
       id: 0,
       result: 'baz'
@@ -57,7 +57,7 @@ describe('parse()', function () {
   })
 
   it('handles failed response', function () {
-    var notif = jsonRpc.parse({
+    var notif = parse({
       jsonrpc: '2.0',
       id: 0,
       error: {

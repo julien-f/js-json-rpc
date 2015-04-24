@@ -18,7 +18,7 @@
     "example": "./examples"
   },
   "scripts": {
-    "test": "standard && mocha -R spec index.spec.js"
+    "test": "standard && mocha '*.spec.js'"
   },
   "dependencies": {
     "bluebird": "^2.9.13",
