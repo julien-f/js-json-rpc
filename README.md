@@ -137,8 +137,11 @@ server.failPendingRequests('connection lost');
 
 ### Parsing
 
-The `parse()` function parse JSON-RPC messages. These message can be
-either JS objects or JSON strings (they will be parsed automatically).
+The `parse()` function parses, normalizes and validates JSON-RPC
+messages.
+
+These message can be either JS objects or JSON strings (they will be
+parsed automatically).
 
 This function may throws:
 
@@ -150,7 +153,7 @@ var parse = require('@julien-f/json-rpc/parse')
 
 parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 // → {
-//   type: 'notification',
+//   [type: 'notification']
 //   jsonrpc: '2.0',
 //   method: 'foo',
 //   params: ['bar']
@@ -158,7 +161,7 @@ parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 
 parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
 // → {
-//   type: 'request',
+//   [type: 'request']
 //   jsonrpc: '2.0',
 //   id: 0,
 //   method: 'add',
@@ -167,12 +170,15 @@ parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
 
 parse('{"jsonrpc":"2.0", "id": 0, "result": 3}');
 // → {
-//   type: 'response',
+//   [type: 'response']
 //   jsonrpc: '2.0',
 //   id: 0,
 //   result: 3
 // }
 ```
+
+> A parsed message has a hidden property `type` set to easily
+> differentiate between types of JSON-RPC messages.
 
 ### Formatting
 
@@ -189,6 +195,7 @@ JSON if necessary.
 ```javascript
 format.notification('foo', ['bars']);
 // → {
+//   [type: 'notification']
 //   jsonrpc: '2.0',
 //   method: 'foo',
 //   params: ['bar']
@@ -209,6 +216,7 @@ generated if missing via an increment.
 ```javascript
 format.request('add', [1, 2], 0);
 // → {
+//   [type: 'request']
 //   jsonrpc: '2.0',
 //   id: 0,
 //   method: 'add',
@@ -223,6 +231,7 @@ A successful response:
 ```javascript
 format.response(0, 3);
 // → {
+//   [type: 'response']
 //   jsonrpc: '2.0',
 //   id: 0,
 //   result: 3
@@ -236,6 +245,7 @@ var MethodNotFound = require('@julien-f/json-rpc/errors').MethodNotFound;
 
 format.error(0, new MethodNotFound('add'));
 // → {
+//   [type: 'error']
 //   jsonrpc: '2.0',
 //   id: 0,
 //   error: {
