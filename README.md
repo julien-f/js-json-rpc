@@ -146,7 +146,9 @@ This function may throws:
 - `InvalidRequest`: if the message is not a valid JSON-RPC message.
 
 ```javascript
-jsonRpc.parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
+var parse = require('json-rpc/parse')
+
+parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 // → {
 //   type: 'notification',
 //   jsonrpc: '2.0',
@@ -154,7 +156,7 @@ jsonRpc.parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 //   params: ['bar']
 // }
 
-jsonRpc.parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
+parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
 // → {
 //   type: 'request',
 //   jsonrpc: '2.0',
@@ -163,7 +165,7 @@ jsonRpc.parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
 //   params: [1, 2]
 // }
 
-jsonRpc.parse('{"jsonrpc":"2.0", "id": 0, "result": 3}');
+parse('{"jsonrpc":"2.0", "id": 0, "result": 3}');
 // → {
 //   type: 'response',
 //   jsonrpc: '2.0',
