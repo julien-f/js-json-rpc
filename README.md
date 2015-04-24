@@ -13,7 +13,7 @@ Installation of the [npm package](https://npmjs.org/package/@julien-f/json-rpc):
 Then require the package:
 
 ```javascript
-var jsonRpc = require('@julien-f/json-rpc');
+var jsonRpc = require('@julien-f/json-rpc')
 ```
 
 ## Usage
@@ -28,27 +28,27 @@ var jsonRpc = require('@julien-f/json-rpc');
 This is the base error for all JSON-RPC errors:
 
 ```javascript
-var JsonRpcError = require('./errors').JsonRpcError;
+var JsonRpcError = require('./errors').JsonRpcError
 ```
 
 These are the specific errors:
 
 ```javascript
-var InvalidJson = require('./errors').InvalidJson;
-var InvalidRequest = require('./errors').InvalidRequest;
-var MethodNotFound = require('./errors').MethodNotFound;
-var InvalidParameters = require('./errors').InvalidParameters;
-var UnknownError = require('./errors').UnknownError;
+var InvalidJson = require('./errors').InvalidJson
+var InvalidRequest = require('./errors').InvalidRequest
+var MethodNotFound = require('./errors').MethodNotFound
+var InvalidParameters = require('./errors').InvalidParameters
+var UnknownError = require('./errors').UnknownError
 ```
 
 Custom errors can of course be created, they just have to inherit
 `JsonRpcError`:
 
 ```javascript
-function MyError() {
-  MyError.super_.call(this, 'my error', 1);
+function MyError () {
+  MyError.super_.call(this, 'my error', 1)
 }
-require('util').inherits(MyError, JsonRpcError);
+require('util').inherits(MyError, JsonRpcError)
 ```
 
 ### Server
@@ -59,7 +59,7 @@ be flexible enough to use in any environments.
 #### Construction
 
 ```javascript
-var server = jsonRpc.createServer(function onMessage(message) {
+var server = jsonRpc.createServer(function onMessage (message) {
   // Here is the main handler where every incoming
   // notification/request message goes.
   //
@@ -67,7 +67,7 @@ var server = jsonRpc.createServer(function onMessage(message) {
   // return a value to send the related response.
   //
   // If the response is asynchronous, just return a promise.
-});
+})
 ```
 
 The server is a duplex stream, it can be connected to other stream via
@@ -77,34 +77,34 @@ the `pipe()` method:
 // For this example, we create a WebSocket server:
 require('websocket-stream').createServer({
   port: 8080
-}, function onConnection(stream) {
-  stream.pipe(server).pipe(stream);
-});
+}, function onConnection (stream) {
+  stream.pipe(server).pipe(stream)
+})
 ```
 
 There is also a low-level interface, the `exec()` method:
 
 ```javascript
-var readAllSteam = require('read-all-stream');
+var readAllSteam = require('read-all-stream')
 
 // For this example we create an HTTP server:
 require('http').createServer({
   port: 8081
-}, function onRequest(req, res) {
+}, function onRequest (req, res) {
   // Read the whole request body.
   readAllStream(req, function (err, data) {
     server.exec(message).then(function (response) {
       // Sends the JSON encoded response.
-      res.end(JSON.stringify(response));
-    });
-  });
-});
+      res.end(JSON.stringify(response))
+    })
+  })
+})
 ```
 
 #### Notification
 
 ```javascript
-server.notify('foo', ['bar']);
+server.notify('foo', ['bar'])
 ```
 
 #### Request
@@ -114,10 +114,10 @@ rejected when the response will be received.
 
 ```javascript
 server.request('add', [1, 2]).then(function (result) {
-  console.log(result);
+  console.log(result)
 }).catch(function (error) {
-  console.error(error.message);
-});
+  console.error(error.message)
+})
 ```
 
 #### Failure
@@ -128,9 +128,9 @@ them manually.
 
 ```javascript
 server.request('add', [1, 2]).catch(function (reason) {
-  console.error(reason);
+  console.error(reason)
   // → connection lost
-});
+})
 
 server.failPendingRequests('connection lost');
 ```
@@ -151,7 +151,7 @@ This function may throws:
 ```javascript
 var parse = require('@julien-f/json-rpc/parse')
 
-parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
+parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}')
 // → {
 //   [type: 'notification']
 //   jsonrpc: '2.0',
@@ -159,7 +159,7 @@ parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}');
 //   params: ['bar']
 // }
 
-parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
+parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}')
 // → {
 //   [type: 'request']
 //   jsonrpc: '2.0',
@@ -168,7 +168,7 @@ parse('{"jsonrpc":"2.0", "id": 0, "method": "add", "params": [1, 2]}');
 //   params: [1, 2]
 // }
 
-parse('{"jsonrpc":"2.0", "id": 0, "result": 3}');
+parse('{"jsonrpc":"2.0", "id": 0, "result": 3}')
 // → {
 //   [type: 'response']
 //   jsonrpc: '2.0',
@@ -193,7 +193,7 @@ JSON if necessary.
 #### Notification
 
 ```javascript
-format.notification('foo', ['bars']);
+format.notification('foo', ['bars'])
 // → {
 //   [type: 'notification']
 //   jsonrpc: '2.0',
@@ -214,7 +214,7 @@ The last argument, the identifier of the request is optional and is
 generated if missing via an increment.
 
 ```javascript
-format.request('add', [1, 2], 0);
+format.request('add', [1, 2], 0)
 // → {
 //   [type: 'request']
 //   jsonrpc: '2.0',
@@ -229,7 +229,7 @@ format.request('add', [1, 2], 0);
 A successful response:
 
 ```javascript
-format.response(0, 3);
+format.response(0, 3)
 // → {
 //   [type: 'response']
 //   jsonrpc: '2.0',
@@ -241,9 +241,9 @@ format.response(0, 3);
 A failed response:
 
 ```javascript
-var MethodNotFound = require('@julien-f/json-rpc/errors').MethodNotFound;
+var MethodNotFound = require('@julien-f/json-rpc/errors').MethodNotFound
 
-format.error(0, new MethodNotFound('add'));
+format.error(0, new MethodNotFound('add'))
 // → {
 //   [type: 'error']
 //   jsonrpc: '2.0',
