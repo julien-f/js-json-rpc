@@ -29,7 +29,7 @@ function formatRequest (method, params, id) {
     id: id || nextId++
   }, 'request')
 }
-exports.formatRequest = formatRequest
+exports.request = formatRequest
 
 // -------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ function formatNotification (method, params) {
     params: params || []
   }, 'notification')
 }
-exports.formatNotification = formatNotification
+exports.notification = formatNotification
 
 // -------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ function formatError (id, error) {
     }
   }, 'error')
 }
-exports.formatError = formatError
+exports.error = formatError
 
 // -------------------------------------------------------------------
 
@@ -74,4 +74,4 @@ function formatResponse (id, result) {
     result: result
   }, 'response')
 }
-exports.formatResponse = formatResponse
+exports.response = formatResponse
