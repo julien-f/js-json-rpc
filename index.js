@@ -40,6 +40,8 @@ JsonRpcServer.prototype._write = function (message, _, next) {
     }
 
     next()
+  }).catch(function (error) {
+    this_.emit('error', error)
   })
 }
 
