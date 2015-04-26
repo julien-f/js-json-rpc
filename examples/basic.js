@@ -54,7 +54,7 @@ peer1.pipe(peer2).pipe(peer1)
 // Peer 1 sends a notification to peer 2.
 peer1.notify('foo', ['bar', 'baz'])
 
-// Peer 1 request peer 2 to do an addition.
+// Peer 1 requests peer 2 to do an addition.
 peer1.request('add', [3.14, 6.28]).then(function (sum) {
   console.log('the sum is %s', sum)
 })
