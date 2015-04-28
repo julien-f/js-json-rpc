@@ -7,8 +7,11 @@
 Installation of the [npm package](https://npmjs.org/package/@julien-f/json-rpc):
 
 ```
-> npm install --save json-rpc
+> npm install --save @julien-f/json-rpc
 ```
+
+> Because this is a [scoped package](https://docs.npmjs.com/getting-
+> started/scoped-packages) you will need to have at least npm 2.7.0.
 
 Then require the package:
 
