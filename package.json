@@ -9,6 +9,16 @@
     "json-rpc",
     "jsonrpc"
   ],
+  "homepage": "https://github.com/julien-f/js-json-rpc",
+  "bugs": "https://github.com/julien-f/js-json-rpc/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/julien-f/js-json-rpc.git"
+  },
+  "author": {
+    "name": "Julien Fontanet",
+    "email": "julien.fontanet@isonoe.net"
+  },
   "devDependencies": {
     "chai": "^2.1.0",
     "mocha": "^2.1.0",
