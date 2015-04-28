@@ -168,8 +168,8 @@ JsonRpcServer.prototype.stream = function () {
 
 // -------------------------------------------------------------------
 
-exports.createServer = function (onReceive, onSend) {
-  return new JsonRpcServer(onReceive, onSend)
+exports.createServer = function (onReceive) {
+  return new JsonRpcServer(onReceive)
 }
 
 // Compatibility.
