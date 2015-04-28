@@ -172,17 +172,6 @@ exports.createServer = function (onReceive) {
   return new JsonRpcServer(onReceive)
 }
 
-// Compatibility.
-Object.defineProperty(exports, 'create', {
-  get: function () {
-    console.error(
-      'jsonRpc: create() is deprecated in favor of createServer()'
-    )
-
-    return exports.createServer
-  }
-})
-
 // ===================================================================
 
 // Ensure maximum import compatibility with Babel.
