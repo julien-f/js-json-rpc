@@ -28,20 +28,31 @@ var jsonRpc = require('@julien-f/json-rpc')
 
 ### Errors
 
+```javascript
+var errors = require('@julien-f/json-rpc/errors')
+```
+
 This is the base error for all JSON-RPC errors:
 
 ```javascript
-var JsonRpcError = require('./errors').JsonRpcError
+throw new errors.JsonRpcError(message, code)
 ```
 
-These are the specific errors:
+The JSON-RPC 2 specification defined also the following specialized
+errors:
 
 ```javascript
-var InvalidJson = require('./errors').InvalidJson
-var InvalidRequest = require('./errors').InvalidRequest
-var MethodNotFound = require('./errors').MethodNotFound
-var InvalidParameters = require('./errors').InvalidParameters
-var UnknownError = require('./errors').UnknownError
+// Parse error: invalid JSON was received by the server.
+throw new errors.InvalidJson()
+
+// Invalid request: the JSON sent is not a valid JSON-RPC 2 message.
+throw new errors.InvalidRequest()
+
+// Method not found: the method does not exist or is not available.
+throw new errors.MethodNotFound(methodName)
+
+// Invalid parameters.
+throw new errors.InvalidParameters(data)
 ```
 
 Custom errors can of course be created, they just have to inherit
@@ -51,7 +62,17 @@ Custom errors can of course be created, they just have to inherit
 function MyError () {
   MyError.super_.call(this, 'my error', 1)
 }
-require('util').inherits(MyError, JsonRpcError)
+require('util').inherits(MyError, errors.JsonRpcError)
+```
+
+Or with ES6:
+
+```javascript
+class MyError extends errors.JsonRpcError {
+  constructor () {
+    super('my error', 1)
+  }
+}
 ```
 
 ### Server
