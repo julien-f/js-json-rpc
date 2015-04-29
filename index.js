@@ -18,12 +18,24 @@ var parse = require('./parse')
 
 // ===================================================================
 
+// Default onReceive implementation:
+//
+// - ignores notifications
+// - throw MethodNotFound for all requests
+function defaultOnReceive (message) {
+  if (message.type === 'request') {
+    throw new MethodNotFound()
+  }
+}
+
+// ===================================================================
+
 function JsonRpcServer (onReceive) {
   Duplex.call(this, {
     objectMode: true
   })
 
-  this._handle = asyncMethod(onReceive)
+  this._handle = asyncMethod(onReceive || defaultOnReceive)
   this._deferreds = Object.create(null)
 
   // Forward the end of the stream.

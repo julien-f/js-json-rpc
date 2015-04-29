@@ -94,6 +94,9 @@ var server = jsonRpc.createServer(function onMessage (message) {
 })
 ```
 
+> The `onMessage` parameter is optional, it can be omitted if this
+> peer does not handle notifications and requests.
+
 The server is a duplex stream, it can be connected to other stream via
 the `pipe()` method:
 
