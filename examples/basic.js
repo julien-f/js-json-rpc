@@ -15,7 +15,7 @@ var MethodNotFound = require('../errors').MethodNotFound
 // and connected to each other.
 var peer1, peer2
 
-peer1 = jsonRpc.createServer(function (message) {
+peer1 = jsonRpc.createPeer(function (message) {
   if (message.type === 'notification') {
     return console.log('notif to peer1: %s(%j)',
       message.method,
@@ -26,7 +26,7 @@ peer1 = jsonRpc.createServer(function (message) {
   throw new MethodNotFound()
 })
 
-peer2 = jsonRpc.createServer(function (message) {
+peer2 = jsonRpc.createPeer(function (message) {
   if (message.type === 'notification') {
     return console.log('notif to peer2: %s%j',
       message.method,

@@ -22,7 +22,7 @@ var jsonRpc = require('@julien-f/json-rpc')
 ## Usage
 
 1. [Errors](#errors)
-2. [Server](#server)
+2. [Peer](#peer)
 3. [Parsing](#parsing)
 4. [Formatting](#formatting)
 
@@ -42,7 +42,7 @@ The JSON-RPC 2 specification defined also the following specialized
 errors:
 
 ```javascript
-// Parse error: invalid JSON was received by the server.
+// Parse error: invalid JSON was received by the peer.
 throw new errors.InvalidJson()
 
 // Invalid request: the JSON sent is not a valid JSON-RPC 2 message.
@@ -75,15 +75,15 @@ class MyError extends errors.JsonRpcError {
 }
 ```
 
-### Server
+### Peer
 
-This library provides a high-level server implementation which should
+This library provides a high-level peer implementation which should
 be flexible enough to use in any environments.
 
 #### Construction
 
 ```javascript
-var server = jsonRpc.createServer(function onMessage (message) {
+var peer = jsonRpc.createPeer(function onMessage (message) {
   // Here is the main handler where every incoming
   // notification/request message goes.
   //
@@ -97,17 +97,17 @@ var server = jsonRpc.createServer(function onMessage (message) {
 > The `onMessage` parameter is optional, it can be omitted if this
 > peer does not handle notifications and requests.
 
-The server is a duplex stream, it can be connected to other stream via
+The peer is a duplex stream, it can be connected to other stream via
 the `pipe()` method:
 
 ```javascript
-// For this example, we create a WebSocket server:
-require('websocket-stream').createServer({
+// For this example, we create a WebSocket peer:
+require('websocket-stream').createPeer({
   port: 8080
 }, function onConnection (stream) {
   // Because a stream can only be used once, it is necessary to create
-  // a dedicated server per connection.
-  stream.pipe(jsonRpc.createServer(onMessage)).pipe(stream)
+  // a dedicated peer per connection.
+  stream.pipe(jsonRpc.createPeer(onMessage)).pipe(stream)
 })
 ```
 
@@ -117,15 +117,15 @@ some limitations (no notifications support) but is often good enough:
 ```javascript
 var readAllSteam = require('read-all-stream')
 
-// For this example we create an HTTP server:
-require('http').createServer({
+// For this example we create an HTTP peer:
+require('http').createPeer({
   port: 8081
 }, function onRequest (req, res) {
   // Read the whole request body.
   readAllStream(req, function (err, data) {
-    // Here `server` is not used as a stream, it can therefore be used
+    // Here `peer` is not used as a stream, it can therefore be used
     // to handle all the connections.
-    server.exec(message).then(function (response) {
+    peer.exec(message).then(function (response) {
       // Sends the JSON encoded response.
       res.end(JSON.stringify(response))
     })
@@ -136,7 +136,7 @@ require('http').createServer({
 #### Notification
 
 ```javascript
-server.notify('foo', ['bar'])
+peer.notify('foo', ['bar'])
 ```
 
 #### Request
@@ -145,7 +145,7 @@ The `request()` method returns a promise which will be resolved or
 rejected when the response will be received.
 
 ```javascript
-server.request('add', [1, 2]).then(function (result) {
+peer.request('add', [1, 2]).then(function (result) {
   console.log(result)
 }).catch(function (error) {
   console.error(error.message)
@@ -159,12 +159,12 @@ answered (e.g. connection lost), it is therefore necessary to fail
 them manually.
 
 ```javascript
-server.request('add', [1, 2]).catch(function (reason) {
+peer.request('add', [1, 2]).catch(function (reason) {
   console.error(reason)
   // → connection lost
 })
 
-server.failPendingRequests('connection lost');
+peer.failPendingRequests('connection lost');
 ```
 
 ### Parsing

@@ -17,7 +17,7 @@ var PORT = 36914
 
 var httpServer = http.createServer().listen(PORT)
 
-var server = JsonRpc.createServer(function onMessage (message) {
+var server = JsonRpc.createPeer(function onMessage (message) {
   if (message.type === 'notification') {
     return console.log('notification:', message)
   }
@@ -55,7 +55,7 @@ httpServer.on('request', function (req, res) {
 
 // ===================================================================
 
-var client = JsonRpc.createServer()
+var client = JsonRpc.createPeer()
 
 // Connect the JSON-RPC client to HTTP.
 client.on('data', function (data) {

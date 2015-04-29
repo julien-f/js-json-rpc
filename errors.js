@@ -10,7 +10,7 @@ function JsonRpcError (message, code, data) {
   JsonRpcError.super.call(
     this,
     message === undefined ?
-      'unknown error from the server' :
+      'unknown error from the peer' :
       message
   )
 

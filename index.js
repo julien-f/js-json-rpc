@@ -30,7 +30,7 @@ function defaultOnReceive (message) {
 
 // ===================================================================
 
-function JsonRpcServer (onReceive) {
+function JsonRpcPeer (onReceive) {
   Duplex.call(this, {
     objectMode: true
   })
@@ -43,13 +43,13 @@ function JsonRpcServer (onReceive) {
     this.push(null)
   })
 }
-inherits(JsonRpcServer, Duplex)
+inherits(JsonRpcPeer, Duplex)
 
 // Emit buffered outgoing messages.
-JsonRpcServer.prototype._read = function () {}
+JsonRpcPeer.prototype._read = function () {}
 
 // Receive and execute incoming messages.
-JsonRpcServer.prototype._write = function (message, _, next) {
+JsonRpcPeer.prototype._write = function (message, _, next) {
   var this_ = this
   this.exec(message).then(function (response) {
     if (response) {
@@ -62,7 +62,7 @@ JsonRpcServer.prototype._write = function (message, _, next) {
   })
 }
 
-JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec (message) {
+JsonRpcPeer.prototype.exec = asyncMethod(function JsonRpcPeer$exec (message) {
   try {
     message = parse(message)
   } catch (error) {
@@ -141,7 +141,7 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec (message)
 })
 
 // Fails all pending requests.
-JsonRpcServer.prototype.failPendingRequests = function (reason) {
+JsonRpcPeer.prototype.failPendingRequests = function (reason) {
   var deferreds = this._deferreds
   var ids = keys(deferreds)
   ids.forEach(function (id) {
@@ -155,7 +155,7 @@ JsonRpcServer.prototype.failPendingRequests = function (reason) {
  *
  * TODO: handle multi-requests.
  */
-JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request (method, params) {
+JsonRpcPeer.prototype.request = asyncMethod(function JsonRpcPeer$request (method, params) {
   var request = format.request(method, params)
   this.push(request)
 
@@ -178,14 +178,14 @@ JsonRpcServer.prototype.request = asyncMethod(function JsonRpcServer$request (me
  *
  * TODO: handle multi-notifications.
  */
-JsonRpcServer.prototype.notify = asyncMethod(function JsonRpcServer$notify (method, params) {
+JsonRpcPeer.prototype.notify = asyncMethod(function JsonRpcPeer$notify (method, params) {
   this.push(format.notification(method, params))
 })
 
 // -------------------------------------------------------------------
 
-exports.createServer = function (onReceive) {
-  return new JsonRpcServer(onReceive)
+exports.createPeer = function (onReceive) {
+  return new JsonRpcPeer(onReceive)
 }
 
 // ===================================================================
