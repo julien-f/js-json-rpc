@@ -25,6 +25,11 @@ function JsonRpcServer (onReceive) {
 
   this._handle = asyncMethod(onReceive)
   this._deferreds = Object.create(null)
+
+  // Forward the end of the stream.
+  this.on('finish', function () {
+    this.push(null)
+  })
 }
 inherits(JsonRpcServer, Duplex)
 
