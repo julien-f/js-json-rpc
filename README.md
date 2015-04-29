@@ -111,7 +111,7 @@ It is often used with non-connected protocols such as HTTP:
 var readAllSteam = require('read-all-stream')
 
 // For this example we create an HTTP peer:
-require('http').createPeer({
+require('http').createServer({
   port: 8081
 }, function onRequest (req, res) {
   // Read the whole request body.
@@ -135,7 +135,7 @@ therefore be connected to other streams via the `pipe()` method:
 
 ```javascript
 // For this example, we create a WebSocket peer:
-require('websocket-stream').createPeer({
+require('websocket-stream').createServer({
   port: 8080
 }, function onConnection (stream) {
   // Because a stream can only be used once, it is necessary to create
