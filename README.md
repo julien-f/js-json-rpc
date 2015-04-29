@@ -111,7 +111,8 @@ require('websocket-stream').createServer({
 })
 ```
 
-There is also a low-level interface, the `exec()` method:
+There is also a low-level interface, the `exec()` method which has
+some limitations (no notifications support) but is often good enough:
 
 ```javascript
 var readAllSteam = require('read-all-stream')
