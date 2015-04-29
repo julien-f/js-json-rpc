@@ -17,20 +17,6 @@ var PORT = 36914
 
 // ===================================================================
 
-var jsonRpc = JsonRpc.createServer(function onMessage (message) {
-  if (message.type === 'notification') {
-    return console.log('notification:', message)
-  }
-
-  if (message.method === 'bar') {
-    console.log('bar called')
-
-    return true
-  }
-
-  throw new MethodNotFound()
-})
-
 http.createServer(function (req, res) {
   combineStreams([
     // Read from the request.
@@ -40,7 +26,19 @@ http.createServer(function (req, res) {
     parseJsonStream(),
 
     // Handle JSON-RPC requests.
-    jsonRpc,
+    JsonRpc.createServer(function onMessage (message) {
+      if (message.type === 'notification') {
+        return console.log('notification:', message)
+      }
+
+      if (message.method === 'bar') {
+        console.log('bar called')
+
+        return true
+      }
+
+      throw new MethodNotFound()
+    }),
 
     // Format as line-delimited JSON messages.
     serializeJsonStream(),
@@ -48,11 +46,15 @@ http.createServer(function (req, res) {
     // Send to the response.
     res
   ])
+
+  // Only one request is used in this example, the server can
+  // therefore be shutdown now.
+  this.close()
 }).listen(PORT)
 
 // ===================================================================
 
-require('http').request({
+http.request({
   method: 'POST',
   port: PORT
 }, function (res) {
