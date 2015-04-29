@@ -6,9 +6,7 @@ require('bluebird').longStackTraces()
 
 var http = require('http')
 
-var parseJsonStream = require('ldjson-stream').parse
-var serializeJsonStream = require('ldjson-stream').serialize
-var combineStreams = require('stream-combiner')
+var readAllStream = require('read-all-stream')
 
 var JsonRpc = require('../')
 var MethodNotFound = require('../errors').MethodNotFound
@@ -17,61 +15,65 @@ var PORT = 36914
 
 // ===================================================================
 
-http.createServer(function (req, res) {
-  combineStreams([
-    // Read from the request.
-    req,
+var httpServer = http.createServer().listen(PORT)
 
-    // Parse line-delimited JSON messages.
-    parseJsonStream(),
+var server = JsonRpc.createServer(function onMessage (message) {
+  if (message.type === 'notification') {
+    return console.log('notification:', message)
+  }
 
-    // Handle JSON-RPC requests.
-    JsonRpc.createServer(function onMessage (message) {
-      if (message.type === 'notification') {
-        return console.log('notification:', message)
-      }
+  if (message.method === 'bar') {
+    console.log('bar()')
 
-      if (message.method === 'bar') {
-        console.log('bar called')
+    return 'result of bar()'
+  }
 
-        return true
-      }
+  if (message.method === 'closeServer') {
+    console.log('closeServer()')
 
-      throw new MethodNotFound()
-    }),
+    httpServer.close()
+    return true
+  }
 
-    // Format as line-delimited JSON messages.
-    serializeJsonStream(),
+  throw new MethodNotFound()
+})
 
-    // Send to the response.
-    res
-  ])
+// Connect the HTTP server to the JSON-RPC server.
+httpServer.on('request', function (req, res) {
+  readAllStream(req, function (err, data) {
+    // A better error handling would be better
+    if (err) return
 
-  // Only one request is used in this example, the server can
-  // therefore be shutdown now.
-  this.close()
-}).listen(PORT)
+    server.exec(data).then(function (response) {
+      // Only some requests have (non empty) responses.
+      if (response) res.write(JSON.stringify(response))
+
+      res.end()
+    })
+  })
+})
 
 // ===================================================================
 
-http.request({
-  method: 'POST',
-  port: PORT
-}, function (res) {
-  res.pipe(process.stdout)
-}).end(JSON.stringify([
-  {
-    jsonrpc: '2.0',
-    method: 'foo'
-  },
-  {
-    jsonrpc: '2.0',
-    method: 'bar',
-    id: 0
-  },
-  {
-    jsonrpc: '2.0',
-    method: 'baz',
-    id: 1
-  }
-]))
+var client = JsonRpc.createServer()
+
+// Connect the JSON-RPC client to HTTP.
+client.on('data', function (data) {
+  http.request({ method: 'POST', port: PORT }, function (res) {
+    readAllStream(res, function (err, data) {
+      // A better error handling would be better
+      if (err) return
+
+      // Only some requests have (non empty) responses.
+      if (data) client.write(data)
+    })
+  }).end(JSON.stringify(data))
+})
+
+client.notify('foo')
+client.request('bar').then(console.log)
+client.request('baz').catch(console.error)
+
+setTimeout(function () {
+  client.request('closeServer')
+}, 1e3)
