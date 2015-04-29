@@ -18,11 +18,11 @@ var parse = require('./parse')
 
 // ===================================================================
 
-// Default onReceive implementation:
+// Default onMessage implementation:
 //
 // - ignores notifications
 // - throw MethodNotFound for all requests
-function defaultOnReceive (message) {
+function defaultOnMessage (message) {
   if (message.type === 'request') {
     throw new MethodNotFound()
   }
@@ -30,12 +30,12 @@ function defaultOnReceive (message) {
 
 // ===================================================================
 
-function JsonRpcPeer (onReceive) {
+function JsonRpcPeer (onMessage) {
   Duplex.call(this, {
     objectMode: true
   })
 
-  this._handle = asyncMethod(onReceive || defaultOnReceive)
+  this._handle = asyncMethod(onMessage || defaultOnMessage)
   this._deferreds = Object.create(null)
 
   // Forward the end of the stream.
@@ -184,8 +184,8 @@ JsonRpcPeer.prototype.notify = asyncMethod(function JsonRpcPeer$notify (method, 
 
 // -------------------------------------------------------------------
 
-exports.createPeer = function (onReceive) {
-  return new JsonRpcPeer(onReceive)
+exports.createPeer = function (onMessage) {
+  return new JsonRpcPeer(onMessage)
 }
 
 // ===================================================================
