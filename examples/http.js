@@ -41,7 +41,7 @@ var server = JsonRpc.createPeer(function onMessage (message) {
 // Connect the HTTP server to the JSON-RPC server.
 httpServer.on('request', function (req, res) {
   readAllStream(req, function (err, data) {
-    // A better error handling would be better
+    // Error handling would be better
     if (err) return
 
     server.exec(data).then(function (response) {

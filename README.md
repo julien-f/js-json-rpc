@@ -97,22 +97,15 @@ var peer = jsonRpc.createPeer(function onMessage (message) {
 > The `onMessage` parameter is optional, it can be omitted if this
 > peer does not handle notifications and requests.
 
-The peer is a duplex stream, it can be connected to other stream via
-the `pipe()` method:
+#### Connection
 
-```javascript
-// For this example, we create a WebSocket peer:
-require('websocket-stream').createPeer({
-  port: 8080
-}, function onConnection (stream) {
-  // Because a stream can only be used once, it is necessary to create
-  // a dedicated peer per connection.
-  stream.pipe(jsonRpc.createPeer(onMessage)).pipe(stream)
-})
-```
+> The peer is now almost ready, but before being usable, it has to be
+> connected to the transport layer.
 
-There is also a low-level interface, the `exec()` method which has
-some limitations (no notifications support) but is often good enough:
+The simplest interface, the `exec()` method, has some limitations (no
+notifications support) but is often good enough.
+
+It is often used with non-connected protocols such as HTTP:
 
 ```javascript
 var readAllSteam = require('read-all-stream')
@@ -123,13 +116,31 @@ require('http').createPeer({
 }, function onRequest (req, res) {
   // Read the whole request body.
   readAllStream(req, function (err, data) {
+    // Error handling would be better.
+    if (err) return
+
     // Here `peer` is not used as a stream, it can therefore be used
     // to handle all the connections.
     peer.exec(message).then(function (response) {
-      // Sends the JSON encoded response.
-      res.end(JSON.stringify(response))
+      // Sends the JSON encoded response if any.
+      res.end(response && JSON.stringify(response))
     })
   })
+})
+```
+
+If you have a connected transport, such as WebSocket, you may want to
+use the stream interface: the peer is a duplex stream and can
+therefore be connected to other streams via the `pipe()` method:
+
+```javascript
+// For this example, we create a WebSocket peer:
+require('websocket-stream').createPeer({
+  port: 8080
+}, function onConnection (stream) {
+  // Because a stream can only be used once, it is necessary to create
+  // a dedicated peer per connection.
+  stream.pipe(jsonRpc.createPeer(onMessage)).pipe(stream)
 })
 ```
 
