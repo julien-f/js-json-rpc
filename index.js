@@ -182,15 +182,6 @@ JsonRpcServer.prototype.notify = asyncMethod(function JsonRpcServer$notify (meth
   this.push(format.notification(method, params))
 })
 
-// Compatibility.
-JsonRpcServer.prototype.stream = function () {
-  console.error(
-    'jsonRpc: stream() is deprecated, the server is already a stream!'
-  )
-
-  return this
-}
-
 // -------------------------------------------------------------------
 
 exports.createServer = function (onReceive) {
