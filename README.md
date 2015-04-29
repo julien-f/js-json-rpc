@@ -102,7 +102,9 @@ the `pipe()` method:
 require('websocket-stream').createServer({
   port: 8080
 }, function onConnection (stream) {
-  stream.pipe(server).pipe(stream)
+  // Because a stream can only be used once, it is necessary to create
+  // a dedicated server per connection.
+  stream.pipe(jsonRpc.createServer(onMessage)).pipe(stream)
 })
 ```
 
@@ -117,6 +119,8 @@ require('http').createServer({
 }, function onRequest (req, res) {
   // Read the whole request body.
   readAllStream(req, function (err, data) {
+    // Here `server` is not used as a stream, it can therefore be used
+    // to handle all the connections.
     server.exec(message).then(function (response) {
       // Sends the JSON encoded response.
       res.end(JSON.stringify(response))
