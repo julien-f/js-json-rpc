@@ -58,7 +58,15 @@ JsonRpcServer.prototype.exec = asyncMethod(function JsonRpcServer$exec (message)
   }
 
   if (isArray(message)) {
-    return Bluebird.map(message, this.exec.bind(this))
+    var self = this
+    var results = []
+
+    // Only returns non empty results.
+    return Bluebird.each(message, function (message) {
+      return self.exec(message).then(function (result) {
+        if (result) results.push(result)
+      })
+    }).return(results)
   }
 
   var type = message.type
