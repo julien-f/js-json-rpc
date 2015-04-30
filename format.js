@@ -75,3 +75,10 @@ function formatResponse (id, result) {
   }, 'response')
 }
 exports.response = formatResponse
+
+// ===================================================================
+
+// Ensure maximum import compatibility with Babel.
+Object.defineProperty(exports, '__esModule', {
+  value: true
+})

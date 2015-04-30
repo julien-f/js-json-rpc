@@ -108,3 +108,10 @@ function parse (message) {
   return message
 }
 module.exports = parse
+
+// ===================================================================
+
+// Ensure maximum import compatibility with Babel.
+Object.defineProperty(exports, '__esModule', {
+  value: true
+})
