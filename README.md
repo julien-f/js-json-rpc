@@ -15,63 +15,10 @@ Installation of the [npm package](https://npmjs.org/package/@julien-f/json-rpc):
 
 ## Usage
 
-1. [Errors](#errors)
-2. [Peer](#peer)
+1. [Peer](#peer)
+2. [Errors](#errors)
 3. [Parsing](#parsing)
 4. [Formatting](#formatting)
-
-### Errors
-
-```javascript
-// ES5
-var errors = require('@julien-f/json-rpc/errors')
-
-// ES6
-import * as errors from '@julien-f/json-rpc/errors'
-```
-
-This is the base error for all JSON-RPC errors:
-
-```javascript
-throw new errors.JsonRpcError(message, code)
-```
-
-The JSON-RPC 2 specification defined also the following specialized
-errors:
-
-```javascript
-// Parse error: invalid JSON was received by the peer.
-throw new errors.InvalidJson()
-
-// Invalid request: the JSON sent is not a valid JSON-RPC 2 message.
-throw new errors.InvalidRequest()
-
-// Method not found: the method does not exist or is not available.
-throw new errors.MethodNotFound(methodName)
-
-// Invalid parameters.
-throw new errors.InvalidParameters(data)
-```
-
-Custom errors can of course be created, they just have to inherit
-`JsonRpcError`:
-
-```javascript
-function MyError () {
-  MyError.super_.call(this, 'my error', 1)
-}
-require('util').inherits(MyError, errors.JsonRpcError)
-```
-
-Or with ES6:
-
-```javascript
-class MyError extends errors.JsonRpcError {
-  constructor () {
-    super('my error', 1)
-  }
-}
-```
 
 ### Peer
 
@@ -102,6 +49,10 @@ var peer = createPeer(function onMessage (message) {
 
 > The `onMessage` parameter is optional, it can be omitted if this
 > peer does not handle notifications and requests.
+
+> Note: For security concerns, only exceptions which are instance of
+> `JsonRpcError` will be transmitted to the remote peer, all others
+> will be substituted by an instance of `UnknownError`.
 
 #### Connection
 
@@ -182,6 +133,57 @@ peer.request('add', [1, 2]).catch(function (reason) {
 })
 
 peer.failPendingRequests('connection lost');
+```
+
+### Errors
+
+```javascript
+// ES5
+var errors = require('@julien-f/json-rpc/errors')
+
+// ES6
+import * as errors from '@julien-f/json-rpc/errors'
+```
+
+This is the base error for all JSON-RPC errors:
+
+```javascript
+throw new errors.JsonRpcError(message, code)
+```
+
+The JSON-RPC 2 specification defined also the following specialized
+errors:
+
+```javascript
+// Parse error: invalid JSON was received by the peer.
+throw new errors.InvalidJson()
+
+// Invalid request: the JSON sent is not a valid JSON-RPC 2 message.
+throw new errors.InvalidRequest()
+
+// Method not found: the method does not exist or is not available.
+throw new errors.MethodNotFound(methodName)
+
+// Invalid parameters.
+throw new errors.InvalidParameters(data)
+```
+
+Custom errors can of course be created, they just have to inherit
+`JsonRpcError`:
+
+```javascript
+// ES5
+function MyError () {
+  MyError.super_.call(this, 'my error', 1)
+}
+require('util').inherits(MyError, errors.JsonRpcError)
+
+// ES6
+class MyError extends errors.JsonRpcError {
+  constructor () {
+    super('my error', 1)
+  }
+}
 ```
 
 ### Parsing
