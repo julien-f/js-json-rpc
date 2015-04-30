@@ -53,7 +53,7 @@ JsonRpcPeer.prototype._read = function () {}
 // Receive and execute incoming messages.
 JsonRpcPeer.prototype._write = function (message, _, next) {
   var this_ = this
-  this.exec(message).then(function (response) {
+  this.exec(String(message)).then(function (response) {
     if (response) {
       this_.push(response)
     }
