@@ -139,15 +139,26 @@ peer.failPendingRequests('connection lost');
 ```javascript
 // ES5
 var errors = require('@julien-f/json-rpc/errors')
+var JsonRpcError = errors.JsonRpcError
+var InvalidJson = errors.InvalidJson
+var InvalidRequest = errors.InvalidRequest
+var MehtodNotFound = errors.MehtodNotFound
+var InvalidParameters = errors.InvalidParameters
 
 // ES6
-import * as errors from '@julien-f/json-rpc/errors'
+import {
+  JsonRpcError,
+  InvalidJson,
+  InvalidRequest,
+  MethodNotFound,
+  InvalidParameters
+} from '@julien-f/json-rpc/errors'
 ```
 
 This is the base error for all JSON-RPC errors:
 
 ```javascript
-throw new errors.JsonRpcError(message, code)
+throw new JsonRpcError(message, code)
 ```
 
 The JSON-RPC 2 specification defined also the following specialized
@@ -155,16 +166,16 @@ errors:
 
 ```javascript
 // Parse error: invalid JSON was received by the peer.
-throw new errors.InvalidJson()
+throw new InvalidJson()
 
 // Invalid request: the JSON sent is not a valid JSON-RPC 2 message.
-throw new errors.InvalidRequest()
+throw new InvalidRequest()
 
 // Method not found: the method does not exist or is not available.
-throw new errors.MethodNotFound(methodName)
+throw new MethodNotFound(methodName)
 
 // Invalid parameters.
-throw new errors.InvalidParameters(data)
+throw new InvalidParameters(data)
 ```
 
 Custom errors can of course be created, they just have to inherit
@@ -173,12 +184,16 @@ Custom errors can of course be created, they just have to inherit
 ```javascript
 // ES5
 function MyError () {
-  MyError.super_.call(this, 'my error', 1)
+  JsonRpcError.call(this, 'my error', 1)
 }
-require('util').inherits(MyError, errors.JsonRpcError)
+MyError.prototype = Object.create(JsonRpcError.prototype, {
+  constructor: {
+    value: MyError
+  }
+})
 
 // ES6
-class MyError extends errors.JsonRpcError {
+class MyError extends JsonRpcError {
   constructor () {
     super('my error', 1)
   }
