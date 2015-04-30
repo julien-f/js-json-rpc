@@ -28,7 +28,7 @@ function defaultOnMessage (message) {
   }
 }
 
-var toJson = JSON.stringify;
+var toJson = JSON.stringify
 
 // ===================================================================
 
