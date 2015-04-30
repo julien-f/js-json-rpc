@@ -28,6 +28,8 @@ function defaultOnMessage (message) {
   }
 }
 
+var toJson = JSON.stringify;
+
 // ===================================================================
 
 function JsonRpcPeer (onMessage) {
@@ -66,7 +68,7 @@ JsonRpcPeer.prototype.exec = asyncMethod(function JsonRpcPeer$exec (message) {
   try {
     message = parse(message)
   } catch (error) {
-    return format.error(message.id, error)
+    return toJson(format.error(message.id, error))
   }
 
   if (isArray(message)) {
@@ -132,10 +134,10 @@ JsonRpcPeer.prototype.exec = asyncMethod(function JsonRpcPeer$exec (message) {
 
   return promise.then(
     function (result) {
-      return format.response(message.id, result)
+      return toJson(format.response(message.id, result))
     },
     function (error) {
-      return format.error(message.id, error)
+      return toJson(format.error(message.id, error))
     }
   )
 })
@@ -157,7 +159,7 @@ JsonRpcPeer.prototype.failPendingRequests = function (reason) {
  */
 JsonRpcPeer.prototype.request = asyncMethod(function JsonRpcPeer$request (method, params) {
   var request = format.request(method, params)
-  this.push(request)
+  this.push(toJson(request))
 
   // https://github.com/petkaantonov/bluebird/blob/master/API.md#deferred-migration
   var promise, resolve, reject
@@ -179,7 +181,7 @@ JsonRpcPeer.prototype.request = asyncMethod(function JsonRpcPeer$request (method
  * TODO: handle multi-notifications.
  */
 JsonRpcPeer.prototype.notify = asyncMethod(function JsonRpcPeer$notify (method, params) {
-  this.push(format.notification(method, params))
+  this.push(toJson(format.notification(method, params)))
 })
 
 // -------------------------------------------------------------------

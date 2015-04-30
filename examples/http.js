@@ -45,10 +45,7 @@ httpServer.on('request', function (req, res) {
     if (err) return
 
     server.exec(data).then(function (response) {
-      // Only some requests have (non empty) responses.
-      if (response) res.write(JSON.stringify(response))
-
-      res.end()
+      res.end(response)
     })
   })
 })
@@ -67,7 +64,7 @@ client.on('data', function (data) {
       // Only some requests have (non empty) responses.
       if (data) client.write(data)
     })
-  }).end(JSON.stringify(data))
+  }).end(data)
 })
 
 client.notify('foo')

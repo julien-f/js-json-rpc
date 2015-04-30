@@ -79,8 +79,7 @@ require('http').createServer({
     // Here `peer` is not used as a stream, it can therefore be used
     // to handle all the connections.
     peer.exec(message).then(function (response) {
-      // Sends the JSON encoded response if any.
-      res.end(response && JSON.stringify(response))
+      res.end(response)
     })
   })
 })
