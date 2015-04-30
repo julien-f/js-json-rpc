@@ -13,12 +13,6 @@ Installation of the [npm package](https://npmjs.org/package/@julien-f/json-rpc):
 > Because this is a [scoped package](https://docs.npmjs.com/getting-
 > started/scoped-packages) you will need to have at least npm 2.7.0.
 
-Then require the package:
-
-```javascript
-var jsonRpc = require('@julien-f/json-rpc')
-```
-
 ## Usage
 
 1. [Errors](#errors)
@@ -29,7 +23,11 @@ var jsonRpc = require('@julien-f/json-rpc')
 ### Errors
 
 ```javascript
+// ES5
 var errors = require('@julien-f/json-rpc/errors')
+
+// ES6
+import * as errors from '@julien-f/json-rpc/errors'
 ```
 
 This is the base error for all JSON-RPC errors:
@@ -80,10 +78,18 @@ class MyError extends errors.JsonRpcError {
 This library provides a high-level peer implementation which should
 be flexible enough to use in any environments.
 
+```javascript
+// ES5
+var createPeer = require('@julien/json-rpc').createPeer
+
+// ES6
+import {createPeer} from '@julien/json-rpc'
+```
+
 #### Construction
 
 ```javascript
-var peer = jsonRpc.createPeer(function onMessage (message) {
+var peer = createPeer(function onMessage (message) {
   // Here is the main handler where every incoming
   // notification/request message goes.
   //
@@ -110,7 +116,7 @@ It is often used with non-connected protocols such as HTTP:
 ```javascript
 var readAllSteam = require('read-all-stream')
 
-// For this example we create an HTTP peer:
+// For this example we create an HTTP server:
 require('http').createServer({
   port: 8081
 }, function onRequest (req, res) {
@@ -134,13 +140,13 @@ use the stream interface: the peer is a duplex stream and can
 therefore be connected to other streams via the `pipe()` method:
 
 ```javascript
-// For this example, we create a WebSocket peer:
+// For this example, we create a WebSocket server:
 require('websocket-stream').createServer({
   port: 8080
 }, function onConnection (stream) {
   // Because a stream can only be used once, it is necessary to create
   // a dedicated peer per connection.
-  stream.pipe(jsonRpc.createPeer(onMessage)).pipe(stream)
+  stream.pipe(createPeer(onMessage)).pipe(stream)
 })
 ```
 
@@ -180,6 +186,14 @@ peer.failPendingRequests('connection lost');
 
 ### Parsing
 
+```javascript
+// ES5
+var parse = require('@julien-f/json-rpc/parse')
+
+// ES6
+import parse from '@julien/json-rpc/parse'
+```
+
 The `parse()` function parses, normalizes and validates JSON-RPC
 messages.
 
@@ -192,8 +206,6 @@ This function may throws:
 - `InvalidRequest`: if the message is not a valid JSON-RPC message.
 
 ```javascript
-var parse = require('@julien-f/json-rpc/parse')
-
 parse('{"jsonrpc":"2.0", "method": "foo", "params": ["bar"]}')
 // → {
 //   [type: 'notification']
@@ -226,7 +238,11 @@ parse('{"jsonrpc":"2.0", "id": 0, "result": 3}')
 ### Formatting
 
 ```javascript
+// ES5
 var format = require('@julien-f/json-rpc/format')
+
+// ES6
+import * as format from '@julien/json-rpc/format'
 ```
 
 The `format.*()` functions can be used to create valid JSON-RPC
