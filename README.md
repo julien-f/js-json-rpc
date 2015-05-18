@@ -248,7 +248,7 @@ parse('{"jsonrpc":"2.0", "id": 0, "result": 3}')
 // }
 ```
 
-> A parsed message has a hidden property `type` set to easily
+> A parsed message has a non enumerable property `type` set to easily
 > differentiate between types of JSON-RPC messages.
 
 ### Formatting
