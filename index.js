@@ -57,11 +57,11 @@ JsonRpcPeer.prototype._write = function (message, _, next) {
     if (response) {
       this_.push(response)
     }
-
-    next()
   }).catch(function (error) {
     this_.emit('error', error)
   })
+
+  next()
 }
 
 JsonRpcPeer.prototype.exec = asyncMethod(function JsonRpcPeer$exec (message) {
