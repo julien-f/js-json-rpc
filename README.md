@@ -4,4 +4,4 @@
 
 ##  Deprecated
 
-Use [json-rpc-protocol](/JsCommunity/json-rpc-protocol) or [json-rpc-peer](/JsCommunity/json-rpc-peer) instead.
+Use [json-rpc-protocol](https://npmjs.com/json-rpc-protocol) or [json-rpc-peer](https://npmjs.com/json-rpc-peer) instead.
